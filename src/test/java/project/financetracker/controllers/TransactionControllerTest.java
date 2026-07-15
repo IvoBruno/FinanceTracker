@@ -97,6 +97,19 @@ public class TransactionControllerTest {
     }
 
     @Test
+    public void shouldReturnBadRequestWhenDateTimeIsFuture() throws Exception {
+        TransactionRecord record = new TransactionRecord(
+                new BigDecimal("50.00"),
+                LocalDateTime.now().plusDays(1)
+        );
+
+        mockMvc.perform(post("/api/transactions")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(record)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void shouldReturnNotFoundWhenNoTransactionsExist() throws Exception {
         mockMvc.perform(get("/api/transactions"))
                 .andExpect(status().isNotFound());
